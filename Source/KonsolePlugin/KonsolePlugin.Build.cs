@@ -7,6 +7,7 @@ public class KonsolePlugin : ModuleRules
 	public KonsolePlugin(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+		PrecompileForTargets = PrecompileTargetsType.Any;
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
