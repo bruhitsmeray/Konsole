@@ -1,11 +1,11 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.2",
+	"VersionName": "1.2.0",
 	"FriendlyName": "Konsole",
 	"Description": "",
 	"Category": "Miscellaneous",
-	"CreatedBy": "Whiteline",
+	"CreatedBy": "Whiteline.",
 	"CreatedByURL": "https://dev-whiteex.github.io/",
 	"DocsURL": "",
 	"MarketplaceURL": "",
