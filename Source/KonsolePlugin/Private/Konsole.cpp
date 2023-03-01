@@ -64,30 +64,35 @@ void UKonsole::ConfigSelfReferences(UScrollBox* InMessageBox, TSubclassOf<UKonso
 
 void UKonsole::PrintToConsole(FString InSender, FString InCode, FString InMessage)
 {
-	UWorld* World = GEngine->GameViewport->GetWorld();
-	if(MessageBoxRef && MessageClass)
+	UWorld* World = GEngine->GetWorld();;
+	if(IsValid(World))
 	{
-		ConsoleMessage = CreateWidget<UKonsoleMessage>(World, MessageClass);
-		ConsoleMessage->SetSender(InSender);
-		ConsoleMessage->SetCode(InCode);
-		ConsoleMessage->SetMessage(InMessage);
-
-		MessageBoxRef->AddChild(ConsoleMessage);
-		FTimerHandle TimerHandle;
-		World->GetTimerManager().SetTimer(TimerHandle, [&]()
+		if(MessageBoxRef && MessageClass)
 		{
-			MessageBoxRef->ScrollToEnd();
-		}, 0.02f, false);
+			ConsoleMessage = CreateWidget<UKonsoleMessage>(World, MessageClass);
+			ConsoleMessage->SetSender(InSender);
+			ConsoleMessage->SetCode(InCode);
+			ConsoleMessage->SetMessage(InMessage);
 
-		const FString LogTime = UKismetTextLibrary::AsDateTime_DateTime(FDateTime::Now()).ToString();
-		FString OutputLog = FString::Printf(TEXT("%s: [%s]: (%s): %s"), *LogTime, *InSender, *InCode, *InMessage);
-		if (InSender == "Client" || InSender == UKismetSystemLibrary::GetPlatformUserName() && InCode == "Notice") {
-			UKonsoleHelper::SaveText(OutputLog.Append("\n"), *FString::Printf(TEXT("%s_notice.txt"), FApp::GetProjectName()));
-		}
-		else {
-			UKonsoleHelper::SaveText(OutputLog.Append("\n"), *FString::Printf(TEXT("%s_log.log"), FApp::GetProjectName()));
+			MessageBoxRef->AddChild(ConsoleMessage);
+			FTimerHandle TimerHandle;
+			World->GetTimerManager().SetTimer(TimerHandle, [&]()
+			{
+				MessageBoxRef->ScrollToEnd();
+			}, 0.02f, false);
+
+			const FString LogTime = UKismetTextLibrary::AsDateTime_DateTime(FDateTime::Now()).ToString();
+			FString OutputLog = FString::Printf(TEXT("%s: [%s]: (%s): %s"), *LogTime, *InSender, *InCode, *InMessage);
+			if (InSender == "Client" || InSender == UKismetSystemLibrary::GetPlatformUserName() && InCode == "Notice") {
+				UKonsoleHelper::SaveText(OutputLog.Append("\n"), *FString::Printf(TEXT("%s_notice.txt"), FApp::GetProjectName()));
+			}
+			else {
+				UKonsoleHelper::SaveText(OutputLog.Append("\n"), *FString::Printf(TEXT("%s_log.log"), FApp::GetProjectName()));
+			}
+		} else {
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *InMessage);
 		}
 	} else {
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *InMessage);
+		UE_LOG(LogTemp, Warning, TEXT("An unknown error occurred while trying to push the message to the Konsole."));
 	}
 }
